@@ -35,7 +35,7 @@ export default function TransactionList({ transactions }: { transactions: Transa
 
   if (transactions.length === 0) {
     return (
-      <div className="text-center py-16 text-slate-400">
+      <div className="text-center py-16 text-muted-foreground">
         <TrendingDown className="h-12 w-12 mx-auto mb-3 opacity-30" />
         <p className="text-sm">Nenhuma transação encontrada</p>
       </div>
@@ -60,7 +60,7 @@ export default function TransactionList({ transactions }: { transactions: Transa
           <TableBody>
             {transactions.map((tx) => (
               <TableRow key={tx.id}>
-                <TableCell className="text-slate-500 text-sm whitespace-nowrap">
+                <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                   {format(new Date(tx.date + 'T00:00:00'), 'dd/MM/yyyy', { locale: ptBR })}
                 </TableCell>
                 <TableCell className="font-medium">{tx.description}</TableCell>
@@ -100,12 +100,12 @@ export default function TransactionList({ transactions }: { transactions: Transa
       {/* Mobile cards */}
       <div className="md:hidden space-y-3">
         {transactions.map((tx) => (
-          <div key={tx.id} className="bg-white rounded-lg border p-4 flex items-center justify-between gap-3">
+          <div key={tx.id} className="bg-card rounded-lg border border-border p-4 flex items-center justify-between gap-3">
             <div className="flex-1 min-w-0">
               <p className="font-medium text-sm truncate">{tx.description}</p>
               <div className="flex items-center gap-2 mt-1">
                 <Badge variant="secondary" className="text-xs">{tx.category}</Badge>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-muted-foreground">
                   {format(new Date(tx.date + 'T00:00:00'), 'dd/MM/yy', { locale: ptBR })}
                 </span>
               </div>

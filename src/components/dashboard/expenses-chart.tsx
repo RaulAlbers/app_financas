@@ -3,11 +3,11 @@
 import {
   PieChart,
   Pie,
-  Cell,
   Tooltip,
   Legend,
   ResponsiveContainer,
 } from 'recharts'
+import { useTheme } from 'next-themes'
 import { Transaction } from '@/lib/supabase/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -21,6 +21,16 @@ function formatCurrency(value: number) {
 }
 
 export default function ExpensesChart({ transactions }: { transactions: Transaction[] }) {
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === 'dark'
+
+  const tooltipStyle = {
+    borderRadius: '8px',
+    border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'}`,
+    backgroundColor: isDark ? '#1c1c1c' : '#ffffff',
+    color: isDark ? '#f8fafc' : '#0f172a',
+  }
+
   const expenses = transactions.filter((t) => t.type === 'expense')
 
   const dataMap = expenses.reduce<Record<string, number>>((acc, t) => {
@@ -29,8 +39,10 @@ export default function ExpensesChart({ transactions }: { transactions: Transact
   }, {})
 
   const data = Object.entries(dataMap)
-    .map(([name, value]) => ({ name, value }))
+    .map(([name, value], index) => ({ name, value, fill: COLORS[index % COLORS.length] }))
     .sort((a, b) => b.value - a.value)
+
+  const legendColor = isDark ? '#94a3b8' : '#64748b'
 
   if (data.length === 0) {
     return (
@@ -39,7 +51,7 @@ export default function ExpensesChart({ transactions }: { transactions: Transact
           <CardTitle className="text-base">Despesas por Categoria</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-48 flex items-center justify-center text-slate-400 text-sm">
+          <div className="h-48 flex items-center justify-center text-muted-foreground text-sm">
             Nenhuma despesa no período
           </div>
         </CardContent>
@@ -63,17 +75,16 @@ export default function ExpensesChart({ transactions }: { transactions: Transact
               outerRadius={100}
               paddingAngle={3}
               dataKey="value"
-            >
-              {data.map((_, index) => (
-                <Cell key={index} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
+            />
+
             <Tooltip
               formatter={(value) => [formatCurrency(Number(value)), 'Valor']}
-              contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
+              contentStyle={tooltipStyle}
             />
             <Legend
-              formatter={(value) => <span className="text-xs text-slate-600">{value}</span>}
+              formatter={(value) => (
+                <span style={{ fontSize: '12px', color: legendColor }}>{value}</span>
+              )}
             />
           </PieChart>
         </ResponsiveContainer>
